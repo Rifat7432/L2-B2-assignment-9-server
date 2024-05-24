@@ -2,10 +2,10 @@ import { userService } from './user.service';
 import catchAsync from '../../../shared/catchAsync';
 import { sendRes } from '../../../shared/sendResponse';
 import httpStatus from 'http-status';
-import { TFileImage } from '../../interface/imageReaponce';
+
 // register user controller
 const createUser = catchAsync(async (req, res) => {
-  const result = await userService.createUserIntoDB(req.body,req.file as TFileImage);
+  const result = await userService.createUserIntoDB(req.body);
   sendRes(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -14,7 +14,7 @@ const createUser = catchAsync(async (req, res) => {
   });
 });
 const createAdmin = catchAsync(async (req, res) => {
-  const result = await userService.createAdminIntoDB(req.body,req.file as TFileImage);
+  const result = await userService.createAdminIntoDB(req.body);
   sendRes(res, {
     statusCode: httpStatus.OK,
     success: true,
