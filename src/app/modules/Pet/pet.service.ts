@@ -23,28 +23,32 @@ const createPetIntoDB = async (payload: Pet, files: TFileImage[]) => {
 };
 // get all pet service
 const getAllPetsFromDB = async (query: TFilterPet, options: TPagination) => {
-  const { searchTerm, age, ...filterData } = query;
+  const { searchTerm, ...filterData } = query;
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelper.calculatePagination(options);
   const andCondition: Prisma.PetWhereInput[] = [];
   if (searchTerm) {
-    andCondition.push({
-      OR: searchFields.map((filed) => ({
-        [filed]: {
-          contains: searchTerm,
-          mode: 'insensitive',
-        },
-      })),
-    });
-  }
-  if (age) {
-    andCondition.push({
-      AND: [
-        {
-          age: Number(age),
-        },
-      ],
-    });
+    if (Number(searchTerm)) {
+      andCondition.push({
+        OR: [
+          {
+            age: {
+              equals: Number(searchTerm),
+            },
+          },
+        ],
+      });
+    }
+    if (!Number(searchTerm)) {
+      andCondition.push({
+        OR: searchFields.map((filed) => ({
+          [filed]: {
+            contains: searchTerm,
+            mode: 'insensitive',
+          },
+        })),
+      });
+    }
   }
   if (Object.keys(filterData).length > 0) {
     andCondition.push({
@@ -72,6 +76,15 @@ const getAllPetsFromDB = async (query: TFilterPet, options: TPagination) => {
   };
 };
 // update pet service
+const getPetFromDB = async (id: string) => {
+  const result = await prisma.pet.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+  return result;
+};
+// update pet service
 const updatePetIntoDB = async (id: string, petData: Partial<Pet>) => {
   await prisma.pet.findUniqueOrThrow({
     where: {
@@ -88,6 +101,7 @@ const updatePetIntoDB = async (id: string, petData: Partial<Pet>) => {
 };
 export const petServices = {
   createPetIntoDB,
+  getPetFromDB,
   getAllPetsFromDB,
   updatePetIntoDB,
 };

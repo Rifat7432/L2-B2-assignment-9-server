@@ -1,9 +1,9 @@
 export const userFilterFields = [
   'size',
-  'age',
+  'gender',
   'searchTerm',
   'species',
   'breed',
   'location',
 ];
-export const searchFields = [ 'breed', 'location','species'];
+export const searchFields = ['breed', 'location'];

@@ -11,16 +11,19 @@ const router = express.Router();
 //create pet route
 router.post(
   '/pets',
-  upload.array("file",12),
-  makeJson("data"),
+  upload.array('file', 12),
+  makeJson('data'),
   // auth(UserRole.ADMIN),
   validateRequest(petValidation.createPetValidation),
   petControllers.createPet,
 );
 // get all pet route
+router.get('/pets', petControllers.getAllPets);
+// get a pet route
 router.get(
-  '/pets',
-  petControllers.getAllPets,
+  '/pet/:petId',
+  auth(UserRole.ADMIN, UserRole.USER),
+  petControllers.getPet,
 );
 // update pet route
 router.put(

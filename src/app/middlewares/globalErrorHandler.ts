@@ -48,7 +48,7 @@ const notFound = (req: Request, res: Response, next: NextFunction) => {
   return res.status(httpStatus.NOT_FOUND).json({
     success: false,
     massage: 'API Not Fount !!',
-    error: {
+    errorDetails: {
       path: req.originalUrl,
       massage: 'Your Url Is Not Fount !!',
     },
