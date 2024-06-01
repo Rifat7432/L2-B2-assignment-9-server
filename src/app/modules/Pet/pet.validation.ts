@@ -1,9 +1,11 @@
+import { Gender } from '@prisma/client';
 import { z } from 'zod';
 
 const createPetValidation = z.object({
   body: z.object({
     name: z.string(),
-    gender:z.string(),
+    photos: z.array(z.string()),
+    gender: z.enum([Gender.MALE, Gender.FEMALE]),
     species: z.string(),
     breed: z.string(),
     age: z.number().int().positive(),
@@ -12,7 +14,8 @@ const createPetValidation = z.object({
     description: z.string(),
     temperament: z.string(),
     medicalHistory: z.string(),
-    adoptionRequirements: z.string(),
+    adoptionTerms: z.string(),
+    specialNeeds: z.boolean(),
   }),
 });
 const updatePetValidation = z.object({

@@ -4,18 +4,16 @@ import { paginationHelper } from '../../../helper/pagination';
 import { searchFields } from './pet.constant';
 import { TPagination } from '../../interface/pagination';
 import { TFilterPet } from './pet.interface';
-import { TFileImage } from '../../interface/imageReaponce';
-import { sendImageToCloudinary } from '../../../shared/uploadImage';
 // create pet service
-const createPetIntoDB = async (payload: Pet, files: TFileImage[]) => {
-  if (files.length) {
-    const photos = await files.map(async (file) => {
-      const path = file.path;
-      const { secure_url } = await sendImageToCloudinary(path);
-      return secure_url;
-    });
-    await Promise.all(photos).then((photo) => (payload.photos = photo));
-  }
+const createPetIntoDB = async (payload: Pet) => {
+  // if (files.length) {
+  //   const photos = await files.map(async (file) => {
+  //     const path = file.path;
+  //     const { secure_url } = await sendImageToCloudinary(path);
+  //     return secure_url;
+  //   });
+  //   await Promise.all(photos).then((photo) => (payload.photos = photo));
+  // }
   const result = await prisma.pet.create({
     data: payload,
   });
@@ -84,6 +82,7 @@ const getPetFromDB = async (id: string) => {
   });
   return result;
 };
+
 // update pet service
 const updatePetIntoDB = async (id: string, petData: Partial<Pet>) => {
   await prisma.pet.findUniqueOrThrow({

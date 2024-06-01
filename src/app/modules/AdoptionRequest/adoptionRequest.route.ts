@@ -18,15 +18,29 @@ router.post(
 // get adoption request route
 router.get(
   '/adoption-requests',
-  auth(UserRole.ADMIN,UserRole.USER),
+  auth(UserRole.ADMIN),
   adoptionRequestControllers.getAllAdoptionRequest,
+);
+// get adoption request route
+router.get(
+  '/adoption-requests-pets/:userId',
+  auth(UserRole.ADMIN, UserRole.USER),
+  adoptionRequestControllers.getAllAdoptionRequestPet,
+);
+// get adoption request route
+router.get(
+  '/adoption-requests-unapproved/:userId',
+  auth(UserRole.ADMIN, UserRole.USER),
+  adoptionRequestControllers.getAllUnapprovedAdoptionRequest,
 );
 // update adoption request route
 
 router.put(
   '/adoption-requests/:requestId',
   auth(UserRole.ADMIN),
-  validateRequest(adoptionRequestValidation.updateStatusAdoptionRequestValidation),
+  validateRequest(
+    adoptionRequestValidation.updateStatusAdoptionRequestValidation,
+  ),
   adoptionRequestControllers.updateStatusAdoptionRequest,
 );
 

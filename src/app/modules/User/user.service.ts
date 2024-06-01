@@ -3,6 +3,7 @@ import { JwtPayload } from 'jsonwebtoken';
 import { User, UserRole } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import config from '../../config';
+import { createToken } from '../Auth/auth.utils';
 
 // register user service
 const createUserIntoDB = async (userData: User) => {
@@ -48,7 +49,7 @@ const updateUserIntoDB = async (
   userInfo: JwtPayload,
   userData: Partial<User>,
 ) => {
-  const result = await prisma.user.update({
+  const userUpdatedData = await prisma.user.update({
     where: {
       id: userInfo.userId,
     },
@@ -58,11 +59,27 @@ const updateUserIntoDB = async (
       name: true,
       email: true,
       photo: true,
+      role: true,
       createdAt: true,
       updatedAt: true,
     },
   });
-  return result;
+  const jwtPayload = {
+    userId: userUpdatedData.id,
+    email: userUpdatedData.email,
+    photo: userUpdatedData.photo,
+    role: userUpdatedData.role,
+  };
+
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    config.jwt_access_expires_in as string,
+  );
+
+  return {
+    accessToken,
+  };
 };
 //get a user service
 const getUserFromDB = async (userData: JwtPayload) => {

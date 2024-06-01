@@ -6,6 +6,7 @@ const createAdoptionRequestValidation = z.object({
     petId: z.string(),
     petOwnershipExperience: z.string(),
     contactInformation: z.string(),
+    isAgreed: z.boolean(),
   }),
 });
 const updateStatusAdoptionRequestValidation = z.object({

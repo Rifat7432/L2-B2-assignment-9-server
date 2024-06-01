@@ -25,6 +25,30 @@ const getAllAdoptionRequest = catchAsync(async (req, res) => {
     data: result,
   });
 });
+// get adoption request controller
+const getAllAdoptionRequestPet = catchAsync(async (req, res) => {
+  const result = await adoptionRequestServices.getPetsOfUserFromDB(
+    req.params.userId,
+  );
+  return sendRes(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Adoption requests retrieved successfully',
+    data: result,
+  });
+});
+// get adoption request controller
+const getAllUnapprovedAdoptionRequest = catchAsync(async (req, res) => {
+  const result = await adoptionRequestServices.getUnapprovedRequestOfUserFromDB(
+    req.params.userId,
+  );
+  return sendRes(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Unapproved requests retrieved successfully',
+    data: result,
+  });
+});
 // update adoption request controller
 const updateStatusAdoptionRequest = catchAsync(async (req, res) => {
   const result =
@@ -43,4 +67,6 @@ export const adoptionRequestControllers = {
   createAdoptionRequest,
   getAllAdoptionRequest,
   updateStatusAdoptionRequest,
+  getAllAdoptionRequestPet,
+  getAllUnapprovedAdoptionRequest,
 };

@@ -4,13 +4,9 @@ import { sendRes } from '../../../shared/sendResponse';
 import { petServices } from './pet.service';
 import { userFilterFields } from './pet.constant';
 import pick from '../../../shared/pick';
-import { TFileImage } from '../../interface/imageReaponce';
 //create pet controller
 const createPet = catchAsync(async (req, res) => {
-  const result = await petServices.createPetIntoDB(
-    req.body,
-    req.files as TFileImage[],
-  );
+  const result = await petServices.createPetIntoDB(req.body);
   sendRes(res, {
     statusCode: httpStatus.OK,
     success: true,

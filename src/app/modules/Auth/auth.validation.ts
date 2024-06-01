@@ -2,10 +2,12 @@ import { z } from 'zod';
 
 const loginUserZodSchema = z.object({
   body: z.object({
-    email: z.string({
-      invalid_type_error: 'Name must be a string',
-      required_error: 'name is required',
-    }).email(),
+    email: z
+      .string({
+        invalid_type_error: 'Name must be a string',
+        required_error: 'name is required',
+      })
+      .email(),
     password: z.string({
       invalid_type_error: 'Name must be a string',
       required_error: 'name is required',
@@ -14,6 +16,12 @@ const loginUserZodSchema = z.object({
 });
 const changePasswordZodSchema = z.object({
   body: z.object({
+    email: z
+      .string({
+        invalid_type_error: 'email must be a string',
+        required_error: 'email is required',
+      })
+      .email(),
     oldPassword: z.string({
       invalid_type_error: 'oldPassword must be a string',
       required_error: 'oldPassword is required',
@@ -26,5 +34,5 @@ const changePasswordZodSchema = z.object({
 });
 export const authenticationZodSchema = {
   loginUserZodSchema,
-  changePasswordZodSchema
+  changePasswordZodSchema,
 };

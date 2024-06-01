@@ -4,15 +4,11 @@ import { petControllers } from './pet.controler';
 import validateRequest from '../../middlewares/validateRequest';
 import { petValidation } from './pet.validation';
 import { UserRole } from '@prisma/client';
-import { upload } from '../../../shared/uploadImage';
-import makeJson from '../../middlewares/makeJson';
 
 const router = express.Router();
 //create pet route
 router.post(
   '/pets',
-  upload.array('file', 12),
-  makeJson('data'),
   // auth(UserRole.ADMIN),
   validateRequest(petValidation.createPetValidation),
   petControllers.createPet,

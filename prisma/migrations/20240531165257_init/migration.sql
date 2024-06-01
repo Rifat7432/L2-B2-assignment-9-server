@@ -1,12 +1,24 @@
 -- CreateEnum
 CREATE TYPE "RequestStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
 
+-- CreateEnum
+CREATE TYPE "Gender" AS ENUM ('MALE', 'FEMALE');
+
+-- CreateEnum
+CREATE TYPE "UserRole" AS ENUM ('SUPER_ADMIN', 'ADMIN', 'USER');
+
+-- CreateEnum
+CREATE TYPE "UserStatus" AS ENUM ('ACTIVE', 'INACTIVE');
+
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "photo" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "role" "UserRole" NOT NULL,
     "password" TEXT NOT NULL,
+    "status" "UserStatus" NOT NULL DEFAULT 'ACTIVE',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -17,7 +29,9 @@ CREATE TABLE "users" (
 CREATE TABLE "pets" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "photos" TEXT[],
     "species" TEXT NOT NULL,
+    "gender" "Gender" NOT NULL,
     "breed" TEXT NOT NULL,
     "age" INTEGER NOT NULL,
     "size" TEXT NOT NULL,
@@ -25,7 +39,8 @@ CREATE TABLE "pets" (
     "description" TEXT NOT NULL,
     "temperament" TEXT NOT NULL,
     "medicalHistory" TEXT NOT NULL,
-    "adoptionRequirements" TEXT NOT NULL,
+    "adoptionTerms" TEXT NOT NULL,
+    "specialNeeds" BOOLEAN NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -39,6 +54,8 @@ CREATE TABLE "adoptionRequests" (
     "petId" TEXT NOT NULL,
     "status" "RequestStatus" NOT NULL DEFAULT 'PENDING',
     "petOwnershipExperience" TEXT NOT NULL,
+    "isAgreed" BOOLEAN NOT NULL DEFAULT false,
+    "contactInformation" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
