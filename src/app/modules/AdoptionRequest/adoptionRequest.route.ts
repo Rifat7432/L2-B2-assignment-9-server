@@ -11,7 +11,7 @@ const router = express.Router();
 // adoption request route
 router.post(
   '/adoption-request',
-  auth(UserRole.USER),
+  auth(UserRole.ADMIN, UserRole.USER),
   validateRequest(adoptionRequestValidation.createAdoptionRequestValidation),
   adoptionRequestControllers.createAdoptionRequest,
 );
@@ -34,7 +34,6 @@ router.get(
   adoptionRequestControllers.getAllUnapprovedAdoptionRequest,
 );
 // update adoption request route
-
 router.put(
   '/adoption-requests/:requestId',
   auth(UserRole.ADMIN),

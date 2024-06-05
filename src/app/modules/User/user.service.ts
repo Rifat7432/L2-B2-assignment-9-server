@@ -1,6 +1,6 @@
 import { prisma } from '../../../app';
 import { JwtPayload } from 'jsonwebtoken';
-import { User, UserRole } from '@prisma/client';
+import { User, UserRole, UserStatus } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import config from '../../config';
 import { createToken } from '../Auth/auth.utils';
@@ -25,22 +25,17 @@ const createUserIntoDB = async (userData: User) => {
   });
   return result;
 };
-const createAdminIntoDB = async (userData: User) => {
-  const { password, ...restData } = userData;
-  const hashedPassword = await bcrypt.hash(
-    password,
-    Number(config.bcrypt_salt_rounds as string),
-  );
-  const result = await prisma.user.create({
-    data: { ...restData, password: hashedPassword, role: UserRole.ADMIN },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      photo: true,
-      createdAt: true,
-      updatedAt: true,
+const createAdminIntoDB = async (id: string) => {
+  await prisma.user.findUniqueOrThrow({
+    where: {
+      id,
     },
+  });
+  const result = await prisma.user.update({
+    where: {
+      id,
+    },
+    data: { role: UserRole.ADMIN },
   });
   return result;
 };
@@ -49,6 +44,11 @@ const updateUserIntoDB = async (
   userInfo: JwtPayload,
   userData: Partial<User>,
 ) => {
+  await prisma.user.findUniqueOrThrow({
+    where: {
+      id: userInfo.userId,
+    },
+  });
   const userUpdatedData = await prisma.user.update({
     where: {
       id: userInfo.userId,
@@ -81,6 +81,23 @@ const updateUserIntoDB = async (
     accessToken,
   };
 };
+// update user service
+const deleteUserIntoDB = async (id: string) => {
+  await prisma.user.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+  await prisma.user.update({
+    where: {
+      id,
+    },
+    data: { status: UserStatus.INACTIVE },
+    select: {
+      id: true,
+    },
+  });
+};
 //get a user service
 const getUserFromDB = async (userData: JwtPayload) => {
   const result = await prisma.user.findUniqueOrThrow({
@@ -98,9 +115,29 @@ const getUserFromDB = async (userData: JwtPayload) => {
   });
   return result;
 };
+const getAllUserFromDB = async () => {
+  const result = await prisma.user.findMany({
+    where: {
+      status: UserStatus.ACTIVE,
+    },
+    select: {
+      id: true,
+      name: true,
+      photo: true,
+      email: true,
+      role: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+  return result;
+};
 export const userService = {
   createUserIntoDB,
+  getAllUserFromDB,
   createAdminIntoDB,
   getUserFromDB,
   updateUserIntoDB,
+  deleteUserIntoDB,
 };

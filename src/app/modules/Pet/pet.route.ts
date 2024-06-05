@@ -9,7 +9,7 @@ const router = express.Router();
 //create pet route
 router.post(
   '/pets',
-  // auth(UserRole.ADMIN),
+  auth(UserRole.ADMIN),
   validateRequest(petValidation.createPetValidation),
   petControllers.createPet,
 );
@@ -28,5 +28,6 @@ router.put(
   validateRequest(petValidation.updatePetValidation),
   petControllers.updatePet,
 );
+router.delete('/pet/:petId', auth(UserRole.ADMIN), petControllers.deletePet);
 
 export const petRoutes = router;

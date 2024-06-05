@@ -1,19 +1,11 @@
-import { Pet, Prisma } from '@prisma/client';
 import { prisma } from '../../../app';
 import { paginationHelper } from '../../../helper/pagination';
 import { searchFields } from './pet.constant';
 import { TPagination } from '../../interface/pagination';
 import { TFilterPet } from './pet.interface';
+import { Pet, PetStatus, Prisma } from '@prisma/client';
 // create pet service
 const createPetIntoDB = async (payload: Pet) => {
-  // if (files.length) {
-  //   const photos = await files.map(async (file) => {
-  //     const path = file.path;
-  //     const { secure_url } = await sendImageToCloudinary(path);
-  //     return secure_url;
-  //   });
-  //   await Promise.all(photos).then((photo) => (payload.photos = photo));
-  // }
   const result = await prisma.pet.create({
     data: payload,
   });
@@ -24,7 +16,9 @@ const getAllPetsFromDB = async (query: TFilterPet, options: TPagination) => {
   const { searchTerm, ...filterData } = query;
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelper.calculatePagination(options);
-  const andCondition: Prisma.PetWhereInput[] = [];
+  const andCondition: Prisma.PetWhereInput[] = [
+    { status: PetStatus.AVAILABLE },
+  ];
   if (searchTerm) {
     if (Number(searchTerm)) {
       andCondition.push({
@@ -78,6 +72,9 @@ const getPetFromDB = async (id: string) => {
   const result = await prisma.pet.findUniqueOrThrow({
     where: {
       id,
+      status: {
+        not: PetStatus.REMOVED,
+      },
     },
   });
   return result;
@@ -88,6 +85,7 @@ const updatePetIntoDB = async (id: string, petData: Partial<Pet>) => {
   await prisma.pet.findUniqueOrThrow({
     where: {
       id,
+      status: PetStatus.AVAILABLE,
     },
   });
   const result = await prisma.pet.update({
@@ -98,9 +96,25 @@ const updatePetIntoDB = async (id: string, petData: Partial<Pet>) => {
   });
   return result;
 };
+const deletePetIntoDB = async (id: string) => {
+  await prisma.pet.findUniqueOrThrow({
+    where: {
+      id,
+      species: PetStatus.AVAILABLE,
+    },
+  });
+  const result = await prisma.pet.update({
+    where: {
+      id,
+    },
+    data: { status: PetStatus.REMOVED },
+  });
+  return result;
+};
 export const petServices = {
   createPetIntoDB,
   getPetFromDB,
   getAllPetsFromDB,
   updatePetIntoDB,
+  deletePetIntoDB,
 };

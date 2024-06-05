@@ -12,6 +12,7 @@ router.get(
   auth(UserRole.ADMIN, UserRole.USER),
   userController.getUserProfile,
 );
+router.get('/all-profile', auth(UserRole.ADMIN), userController.getAllUser);
 //update user route
 router.put(
   '/profile',
@@ -19,18 +20,17 @@ router.put(
   validateRequest(userValidation.updateUserValidation),
   userController.updateUser,
 );
+router.delete('/delete/:id', auth(UserRole.ADMIN), userController.deleteUser);
 //register user route
 router.post(
   '/register',
-
   validateRequest(userValidation.createUserValidation),
   userController.createUser,
 );
 router.post(
-  '/register-admin',
+  '/register-admin/:id',
   auth(UserRole.ADMIN),
-  validateRequest(userValidation.createUserValidation),
-  userController.createUser,
+  userController.createAdmin,
 );
 
 export const userRoute = router;

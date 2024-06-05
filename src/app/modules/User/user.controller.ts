@@ -14,7 +14,7 @@ const createUser = catchAsync(async (req, res) => {
   });
 });
 const createAdmin = catchAsync(async (req, res) => {
-  const result = await userService.createAdminIntoDB(req.body);
+  const result = await userService.createAdminIntoDB(req.params.id);
   sendRes(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -32,9 +32,29 @@ const updateUser = catchAsync(async (req, res) => {
     data: result,
   });
 });
+// update user controller
+const deleteUser = catchAsync(async (req, res) => {
+  const result = await userService.deleteUserIntoDB(req.params.id);
+  sendRes(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User status change successfully',
+    data: result,
+  });
+});
 //get a user controller
 const getUserProfile = catchAsync(async (req, res) => {
   const result = await userService.getUserFromDB(req.user);
+  return sendRes(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'User profile retrieved successfully',
+    data: result,
+  });
+});
+//get all user controller
+const getAllUser = catchAsync(async (req, res) => {
+  const result = await userService.getAllUserFromDB();
   return sendRes(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -48,5 +68,6 @@ export const userController = {
   createAdmin,
   updateUser,
   getUserProfile,
+  getAllUser,
+  deleteUser,
 };
-//MDRifat@74328
